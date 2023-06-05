@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Portal Alunando: Circular</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f2f2f2;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .widget {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .widget-title {
+      color: #075e54;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .info p {
+      color: #000;
+      font-size: 20px;
+      opacity: 0.8;
+      margin-bottom: 15px;
+    }
+
+    .green-widget {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #a5d6a7;
+      border-radius: 8px;
+      padding: 10px 20px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .green-widget a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    @media screen and (max-width: 480px) {
+      .widget-title {
+        font-size: 20px;
+      }
+
+      .info p {
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="widget">
+      <div class="widget-title">Portal Alunando: Circular</div>
+    </div>
+    <div class="widget">
+      <div class="info">
+        <p style="font-size: 28px;">Onde está <span id="ondeEsta"></span></p>
+        <p>Quem viu <span id="quemViu"></span> às <span id="horaQueViu"></span></p>
+        <p style="font-size: 28px;">Indo para <span id="indoPara"></span></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="green-widget">
+    <a href="https://play.google.com/store/apps/details?id=com.alunando.portal" target="_blank">Baixe o app completo</a>
+  </div>
+
+  <script>
+    // Função para fazer uma requisição HTTP GET
+    function httpGet(url, callback) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", url, true);
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          callback(xhr.responseText);
+        }
+      };
+      xhr.send();
+    }
+
+    // Função para exibir as informações na página
+    function exibirInformacoes(ondeEsta, quemViu, horaQueViu, indoPara) {
+      var ondeEstaSpan = document.getElementById("ondeEsta");
+      ondeEstaSpan.textContent = ondeEsta;
+
+      var quemViuSpan = document.getElementById("quemViu");
+      quemViuSpan.textContent = quemViu;
+
+      var horaQueViuSpan = document.getElementById("horaQueViu");
+      horaQueViuSpan.textContent = horaQueViu;
+
+      var indoParaSpan = document.getElementById("indoPara");
+      indoParaSpan.textContent = indoPara;
+    }
+
+    // Faz a requisição para a API e exibe as informações quando os dados são recebidos
+    httpGet("https://portal-alunando-default-rtdb.firebaseio.com/OndeEsta.json", function(ondeEstaResponse) {
+      var ondeEsta = JSON.parse(ondeEstaResponse);
+
+      httpGet("https://portal-alunando-default-rtdb.firebaseio.com/QuemViu.json", function(quemViuResponse) {
+        var quemViu = JSON.parse(quemViuResponse);
+
+        httpGet("https://portal-alunando-default-rtdb.firebaseio.com/HoraQueViu.json", function(horaQueViuResponse) {
+          var horaQueViu = JSON.parse(horaQueViuResponse);
+
+          httpGet("https://portal-alunando-default-rtdb.firebaseio.com/IndoPara.json", function(indoParaResponse) {
+            var indoPara = JSON.parse(indoParaResponse);
+
+            exibirInformacoes(ondeEsta, quemViu, horaQueViu, indoPara);
+          });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
