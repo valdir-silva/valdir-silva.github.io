@@ -125,19 +125,19 @@
     }
 
     // Faz a requisição para a API e exibe as informações quando os dados são recebidos
-    httpGet("https://portal-alunando-default-rtdb.firebaseio.com/OndeEsta.json", function(ondeEstaResponse) {
+    httpGet("https://portal-alunando-default-rtdb.firebaseio.com/WhereIsTheBus/whereIs.json", function(ondeEstaResponse) {
       var ondeEsta = JSON.parse(ondeEstaResponse);
 
-      httpGet("https://portal-alunando-default-rtdb.firebaseio.com/QuemViu.json", function(quemViuResponse) {
+      httpGet("https://portal-alunando-default-rtdb.firebaseio.com/WhereIsTheBus/userName.json", function(quemViuResponse) {
         var quemViu = JSON.parse(quemViuResponse);
 
-        httpGet("https://portal-alunando-default-rtdb.firebaseio.com/HoraQueViu.json", function(horaQueViuResponse) {
+        httpGet("https://portal-alunando-default-rtdb.firebaseio.com/WhereIsTheBus/time.json", function(horaQueViuResponse) {
           var horaQueViu = JSON.parse(horaQueViuResponse);
-
-          httpGet("https://portal-alunando-default-rtdb.firebaseio.com/IndoPara.json", function(indoParaResponse) {
+          
+          httpGet("https://portal-alunando-default-rtdb.firebaseio.com/WhereIsTheBus/goingTo.json", function(indoParaResponse) {
             var indoPara = JSON.parse(indoParaResponse);
 
-            exibirInformacoes(ondeEsta, quemViu, horaQueViu, indoPara);
+            exibirInformacoes(ondeEsta, quemViu, horaQueViu.substring(11, 16), indoPara);
           });
         });
       });
