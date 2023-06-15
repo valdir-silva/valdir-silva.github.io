@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exclusão de Conta - Alunando</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+    <h1>Exclusão de Conta - Alunando</h1>
+</header>
+
+<main>
+    <section>
+        <h2>Preencha o formulário abaixo para solicitar a exclusão de sua conta:</h2>
+
+        <form id="delete-account-form" method="post">
+            <label for="email">Endereço de e-mail:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="confirmar-email">Confirme o endereço de e-mail:</label>
+            <input type="email" id="confirmar-email" name="confirmar-email" required>
+
+            <label for="senha">Senha:</label>
+            <input type="password" id="senha" name="senha" required>
+
+            <button type="submit" id="delete-account-button">Enviar solicitação</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>O que acontece após a exclusão da conta?</h2>
+        <p>Após a exclusão da conta, todos os dados relacionados ao usuário serão excluídos
+            permanentemente, incluindo informações de acesso, dados pessoais e histórico de uso. As
+            turmas e alunos dos quais o usuário faz parte também serão afetados, já que todas as
+            informações relacionadas à conta serão removidas.</p>
+    </section>
+
+    <section>
+        <h2>Período de armazenamento adicional</h2>
+        <p>O Alunando não armazena dados de usuários após a exclusão da conta, exceto em casos em
+            que a lei exige o armazenamento desses dados por um período específico. Nesse caso, os
+            dados serão mantidos apenas pelo tempo estipulado pela legislação.</p>
+    </section>
+
+    <section>
+        <h2>Confirmação da exclusão da conta</h2>
+        <p>Assim que a exclusão da conta for concluída, o usuário receberá uma notificação por
+            e-mail confirmando a exclusão. Caso o usuário não receba a confirmação no prazo de 24
+            horas, entre em contato com a equipe de suporte do Alunando pelo e-mail <a
+                    href="mailto:suporte@alunando.com">suporte@alunando.com</a>.</p>
+    </section>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#delete-account-form').submit(function(e) {
+      e.preventDefault(); // previne o envio do formulário
+
+      // obtém os dados do formulário
+      let email = $('#email').val();
+      let confirmarEmail = $('#confirmar-email').val();
+      let senha = $('#senha').val();
+
+      // verifica se os campos foram preenchidos
+      if (email === '' || confirmarEmail === '' || senha === '') {
+          alert('Por favor, preencha todos os campos.');
+          return;
+      }
+
+      // verifica se o endereço de e-mail foi confirmado corretamente
+      if (email !== confirmarEmail) {
+          alert('Os endereços de e-mail informados não coincidem. Por favor, tente novamente.');
+          return;
+      }
+
+      // exibe uma mensagem de confirmação
+      let confirmarExclusao = confirm('Tem certeza de que deseja excluir sua conta no Alunando? Esta ação é irreversível.');
+
+      if (confirmarExclusao) {
+          // envia a solicitação para o servidor
+          $.ajax({
+              url: $('#delete-account-form').attr('action'),
+              type: 'post',
+              data: $('#delete-account-form').serialize(),
+              success: function(response) {
+                  alert('Sua solicitação de exclusão de conta foi enviada com sucesso. Você receberá uma confirmação por e-mail em breve.');
+                  $('#delete-account-form')[0].reset();
+                  
+                  // envia e-mail com as informações para exclusão da conta
+                  let $seuEmail = 'seuemail@exemplo.com';
+                  let $seuNome = 'Seu Nome';
+                  let $seuAssunto = 'Exclusão de Conta';
+                  let $seuCorpo = `Por favor, exclua a conta do usuário com o e-mail ${email} e senha ${senha}.`;
+                  $.ajax({
+                      url: "https://api.elasticemail.com/v2/email/send",
+                      type: "POST",
+                      data: {
+                          "apikey": "SUA_API_KEY",
+                          "isTransactional": "true",
+                          "subject": $seuAssunto,
+                          "from": $seuEmail,
+                          "fromName": $seuNome,
+                          "to": email,
+                          "bodyHtml": $seuCorpo,
+                          "plainText": $seuCorpo
+                      },
+                      success: function(response) {
+                          console.log(response);
+                      },
+                      error: function(err) {
+                          console.error(err);
+                      }
+                  });
+              },
+              error: function() {
+                  alert('Não foi possível enviar sua solicitação de exclusão de conta no momento. Por favor, tente novamente mais tarde.');
+              }
+          });
+      }
+  });
+}); 
+</script>
+</body>
+</html>
